@@ -97,11 +97,18 @@ class ElasticsearchDocumentStore(BaseDocumentStore):
         self.faq_question_field = faq_question_field
 
     def get_document_by_id(self, id: str) -> Optional[Document]:
-        query = {"query": {"ids": {"values": [id]}}}
+        documents = self.get_documents_by_id([id])
+        if documents:
+            return documents[0]
+        else:
+            return None
+
+    def get_documents_by_id(self, ids: List[str]) -> List[Document]:
+        query = {"query": {"ids": {"values": ids}}}
         result = self.client.search(index=self.index, body=query)["hits"]["hits"]
 
-        document = self._convert_es_hit_to_document(result[0]) if result else None
-        return document
+        documents = [self._convert_es_hit_to_document(hit) for hit in result]
+        return documents
 
     def get_document_ids_by_tags(self, tags: dict) -> List[str]:
         term_queries = [{"terms": {key: value}} for key, value in tags.items()]

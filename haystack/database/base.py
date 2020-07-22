@@ -48,6 +48,10 @@ class BaseDocumentStore(ABC):
         pass
 
     @abstractmethod
+    def get_documents_by_id(self, ids: List[str]) -> List[Document]:
+        pass
+
+    @abstractmethod
     def get_document_ids_by_tags(self, tag) -> List[str]:
         pass
 

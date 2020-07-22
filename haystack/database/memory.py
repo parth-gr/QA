@@ -63,9 +63,16 @@ class InMemoryDocumentStore(BaseDocumentStore):
                                 else:
                                     self.doc_tags[comp_key] = [hash]
 
-    def get_document_by_id(self, id: str) -> Document:
-        document = self._convert_memory_hit_to_document(self.docs[id], doc_id=id)
-        return document
+    def get_document_by_id(self, id: str) -> Optional[Document]:
+        documents = self.get_documents_by_id([id])
+        if documents:
+            return documents[0]
+        else:
+            return None
+
+    def get_documents_by_id(self, ids: List[str]) -> List[Document]:
+        documents = [self._convert_memory_hit_to_document(self.docs[id], doc_id=id) for id in ids]
+        return documents
 
     def _convert_memory_hit_to_document(self, hit: Dict[str, Any], doc_id: Optional[str] = None) -> Document:
         document = Document(
