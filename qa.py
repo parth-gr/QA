@@ -15,10 +15,10 @@ document_store_dense = ElasticsearchDocumentStore(host="localhost", username="",
 documet_store_sparse = ElasticsearchDocumentStore(host="localhost", username="", password="", index="document")
 
 document_store_dense.write_documents(base_corpus())
-dense_retriever = DensePassageRetriever(document_store=document_store_dense, embedding_model="dpr-bert-base-nq",do_lower_case=True, use_gpu=False)
+dense_retriever = DensePassageRetriever(document_store=document_store_dense, embedding_model="dpr-bert-base-nq",do_lower_case=True, use_gpu=True)
 document_store_dense.update_embeddings(dense_retriever)
 
-reader = FARMReader(model_name_or_path="deepset/roberta-base-squad2", use_gpu=False)
+reader = FARMReader(model_name_or_path="deepset/roberta-base-squad2", use_gpu=True)
 
 def find_answer(question: str, marks: int = 1) -> Dict:
   """
