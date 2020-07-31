@@ -1,21 +1,21 @@
-farm==0.4.6
---find-links=https://download.pytorch.org/whl/torch_stable.html
+# farm==0.4.6
+# --find-links=https://download.pytorch.org/whl/torch_stable.html
 fastapi
 uvicorn
 gunicorn
-pandas
-psycopg2-binary
-sklearn
-elasticsearch
-elastic-apm
-tox
-coverage
-langdetect # for PDF conversions
-# optional: sentence-transformers
-#temporarily (used for DPR downloads)
-wget
-python-multipart
-python-docx
-PyMuPdf
-pytesseract
+# pandas
+# psycopg2-binary
+# sklearn
+# elasticsearch
+# elastic-apm
+# tox
+# coverage
+# langdetect # for PDF conversions
+# # optional: sentence-transformers
+# #temporarily (used for DPR downloads)
+# wget
+# python-multipart
+# python-docx
+# PyMuPdf
+# pytesseract
 aiofiles

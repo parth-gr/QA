@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 
 import uvicorn
 
-from qa import find_answer
+#from qa import find_answer
 
 app = FastAPI()
 
@@ -21,6 +21,11 @@ app.add_middleware(
 
 app.mount("/files", StaticFiles(directory="files"), name="files")
 
+@app.get('/')
+async def home():
+  return 'fine'
+
 @app.get('/qa')
 async def question_answer(question: str, marks: int):
-  return find_answer(question, marks)
+  return 'check'
+  #return find_answer(question, marks)
