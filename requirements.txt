@@ -1,4 +1,4 @@
-farm==0.4.6
+#farm==0.4.6
 --find-links=https://download.pytorch.org/whl/torch_stable.html
 fastapi
 uvicorn
@@ -18,3 +18,4 @@ python-multipart
 python-docx
 PyMuPdf
 pytesseract
+aiofiles

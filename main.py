@@ -5,6 +5,8 @@ from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+import uvicorn
+
 from qa import find_answer
 
 app = FastAPI()
@@ -21,4 +23,4 @@ app.mount("/files", StaticFiles(directory="files"), name="files")
 
 @app.get('/qa')
 async def question_answer(question: str, marks: int):
-   return find_answer(question, marks)
+  return find_answer(question, marks)
