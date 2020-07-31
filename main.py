@@ -20,5 +20,5 @@ app.add_middleware(
 app.mount("/files", StaticFiles(directory="files"), name="files")
 
 @app.get('/qa')
-async def question_answer(question: str, mark: int):
-   return find_answer(question, mark)
+async def question_answer(question: str, marks: int):
+   return find_answer(question, marks)
