@@ -4,6 +4,8 @@
 import os
 from subprocess import Popen, PIPE, STDOUT
 
+from indexing.utils import split_multiple_documents_in_paras
+
 def enable_elastic_search(forced: bool = False):
 
   print('Enable Elastic search...')
@@ -23,3 +25,10 @@ def enable_elastic_search(forced: bool = False):
                   )
   # wait until ES has started
   os.system('sleep 30')
+
+
+def base_corpus():
+  """
+  """
+  files = ['files/base/'+file for file in os.listdir('files/base')]
+  return split_multiple_documents_in_paras(files)
