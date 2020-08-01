@@ -7,7 +7,7 @@ from haystack.retriever.dense import DensePassageRetriever
 from haystack.database.elasticsearch import ElasticsearchDocumentStore
 
 from haystack import Finder
-from typing import Dict 
+from typing import Dict, List
 
 enable_elastic_search()
 
@@ -20,24 +20,76 @@ document_store_dense.update_embeddings(dense_retriever)
 
 reader = FARMReader(model_name_or_path="deepset/roberta-base-squad2", use_gpu=True)
 
-def find_answer(question: str, marks: int = 1) -> Dict:
+def prepare_answer_with_granularity(results: List) -> Dict:
+  """
+  """
+  if len(results) == 0: 
+    return {'status': 'fail'}
+  
+  answers = [results[0]['answer']]  
+  content = results[0]['context']
+  content = split_into_sentences(content)
+  answer = results[0]['answer']
+  for sen in content:
+    if results[0]['answer'] in sen:
+        answer = sen
+        break 
+  answers.append(answer)
+  answers.append(results[0]['para'])
+  
+  answer = results[0]['para']
+  details = ""
+  done = set()
+  done.add(results[0]['para'])
+  for result in results[1:]:
+    if result['para'] in done: continue
+    details += '\n' + result['para']
+    if len(details.split()) > 30: break 
+    done.add(result['para'])
+  answers.append(answer + details)
+
+  answer = results[0]['para']
+  if len(results) > 1: answer += '\n'+ results[1]['para']
+  details = ""
+  done = set()
+  done.add(results[0]['para'])
+  if len(results) > 1: done.add(results[1]['para'])
+  for result in results[1:]:
+    if result['para'] in done: continue
+    details += '\n' + result['para']
+    if len(details.split()) > 50: break 
+    done.add(result['para'])
+  answers.append(answer + details)
+  
+  return {
+      'status': 'success',
+      'answer': answers
+    }
+
+
+def qa_with_dense_retrieval(question: str) -> List[dict]:
+  """
+  """
+  finder = Finder(reader, dense_retriever)
+  prediction = finder.get_answers(question=question, top_k_retriever=10, top_k_reader=5)
+  paras = {para.id : para.text for para in dense_retriever.retrieve(question)}
+  results = []
+  for result in prediction['answers']:
+    if result['score'] > 0:
+      results.append({'answer': result['answer'], 'context': result['context'], 'para': paras[result['document_id']]})
+  return results 
+
+
+def find_answer(question: str) -> List[dict]:
   """
   """
   try:
-    finder = Finder(reader, dense_retriever)
-    prediction = finder.get_answers(question=question, top_k_retriever=10, top_k_reader=5)
-    answer = prediction['answers'][0]['answer']
-    score = prediction['answers'][0]['score']
-    if score > 0: 
-     return {
-        'status': 'success',
-        'answer': answer
-      }
-    else:
-      return {
-        'status': 'fail',
-    }
+    question = question.strip()
+    if question[-1] == '?' and question[-2] != ' ': question = question.replace('?', ' ')
+    content = qa_with_dense_retrieval(question)
+    return prepare_answer_with_granularity(content)
   except:
+    return {'status': 'fail'}
     return {
         'status': 'fail',
     }
