@@ -90,6 +90,3 @@ def find_answer(question: str) -> List[dict]:
     return prepare_answer_with_granularity(content)
   except:
     return {'status': 'fail'}
-    return {
-        'status': 'fail',
-    }
